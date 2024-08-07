@@ -107,7 +107,7 @@ class Player(pygame.sprite.Sprite):
 
 
 class Platform(pygame.sprite.Sprite):
-    """define platform size and generation"""
+    """define platform size and color using pygame module"""
 
     def __init__(self, x, y):
 
@@ -124,7 +124,7 @@ def generate_platforms(num_platforms: int) -> tuple[Any, Any]:
     """randomly generate rectangle platforms and return:
     pygame.sprite.Group: Any, lowest_platform.sprite: Any"""
 
-    platforms = pygame.sprite.Group()
+    platform_sprites = pygame.sprite.Group()
     lowest_y = 0
     lowest_platform = None
 
@@ -133,23 +133,22 @@ def generate_platforms(num_platforms: int) -> tuple[Any, Any]:
         x = random.randint(0, SCREEN_WIDTH - PLATFORM_WIDTH)
         y = random.randint(0, SCREEN_HEIGHT - PLATFORM_HEIGHT)
         platform = Platform(x, y)   # object / isntantiation of platform class
-        platforms.add(platform)     # adding the instanced platform to group Platform
+        platform_sprites.add(platform)     # adding the instanced platform to group Platform
 
         if y > lowest_y:
             lowest_y = y            #update the if-condition for every for-loop iteration
             lowest_platform = platform    #update the future return value
 
-    return platforms, lowest_platform
+    return platform_sprites, lowest_platform
 
 
-def calculate_vector(start_pos: tuple, end_pos: tuple) -> tuple:
+def calculate_vector(start_left_click: tuple, end_left_click: tuple) -> tuple:
     """
-    start_pos is when the mouse's left click is pressed
-    end_pos is when the left click is released
+    return a tuple where each vector element carries a magnitude and radian position (as a float)
     """
 
-    dx = end_pos[0] - start_pos[0]
-    dy = end_pos[1] - start_pos[1]
+    dx = end_left_click[0] - start_left_click[0]
+    dy = end_left_click[1] - start_left_click[1]
     distance = math.sqrt(dx ** 2 + dy ** 2)
 
     #scale the strength
@@ -164,7 +163,8 @@ def calculate_vector(start_pos: tuple, end_pos: tuple) -> tuple:
 
     return (vector_x, vector_y)
 
-def display_text(text, color, x, y) -> None:
+
+def display_text(text: str, color: tuple, x: int, y: int) -> None:
     """Helper function to set rendering for Game Over Screen"""
     img = font.render(text, True, color)
     screen.blit(img, (x, y))
@@ -191,7 +191,7 @@ def main() -> None:
 
     #initialize starting values
     dragging = False
-    start_pos = (0, 0) # initialize tuple here for mouse position
+    start_left_click = (0, 0) # initialize tuple here for mouse position
     score = 0
     game_over = False
 
@@ -209,13 +209,13 @@ def main() -> None:
                 # if player isn't jumping, allow click
                 if not player.is_jumping:
                     dragging = True
-                    start_pos = pygame.mouse.get_pos()
+                    start_left_click = pygame.mouse.get_pos()
 
             elif event.type == pygame.MOUSEBUTTONUP: # release left click
 
                 if dragging:
-                    end_pos = pygame.mouse.get_pos()
-                    vector = calculate_vector(start_pos, end_pos)
+                    end_left_click = pygame.mouse.get_pos()
+                    vector = calculate_vector(start_left_click, end_left_click)
                     player.jump(vector)
                     dragging = False
 
