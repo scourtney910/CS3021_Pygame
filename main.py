@@ -1,3 +1,4 @@
+from constants import Constants
 import pygame
 import random
 import sys
@@ -5,28 +6,15 @@ from typing import Any, Union
 import math
 
 
-# Constants
-SCREEN_WIDTH      = 800
-SCREEN_HEIGHT     = 600
-FPS               = 60
-GRAVITY           = 0.5
-PLAYER_WIDTH      = 50
-PLAYER_HEIGHT     = 50
-PLATFORM_WIDTH    = 100
-PLATFORM_HEIGHT   = 20
-PLATFORM_COLOR    = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
-MAX_JUMP_STRENGTH = 20
-
-
 # Initialize Pygame
 pygame.init()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((Constants._screen_w(), Constants._screen_h()))
 pygame.display.set_caption('Jump King + Doodle Jump')
 clock = pygame.time.Clock()
 font = pygame.font.SysFont(None, 55)
 
 
-class Player(pygame.sprite.Sprite):
+class Player(pygame.sprite.Sprite, Constants):
     """define player functionality"""
 
     def __init__(self):
@@ -37,7 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.original_image = pygame.image.load('player.png').convert_alpha()
         self.image = pygame.transform.scale(
             self.original_image,
-            (PLAYER_WIDTH, PLAYER_HEIGHT)
+            (self._player_w(), self._player_h())
             )
 
         self.rect = self.image.get_rect() #forcing player hot box into  a square
@@ -59,20 +47,20 @@ class Player(pygame.sprite.Sprite):
 
         if self.is_jumping:
 
-            self.velocity_y += GRAVITY
+            self.velocity_y += self._grav()
 
             self.rect.y += self.velocity_y
             self.rect.x += self.velocity_x
 
-            if self.rect.bottom >= SCREEN_HEIGHT:
+            if self.rect.bottom >= self._screen_h():
                 # Game Over is set
                 return True
 
         # Wrap around the screen
         if self.rect.right < 0:
-            self.rect.left = SCREEN_WIDTH
+            self.rect.left = self._screen_w()
 
-        elif self.rect.left > SCREEN_WIDTH:
+        elif self.rect.left > self._screen_w():
             self.rect.right = 0
         
         # All previous checks did not change the state of play
@@ -106,14 +94,14 @@ class Player(pygame.sprite.Sprite):
                 self.is_jumping = False
 
 
-class Platform(pygame.sprite.Sprite):
+class Platform(pygame.sprite.Sprite, Constants):
     """define platform size and color using pygame module"""
 
     def __init__(self, x, y):
 
         super().__init__()
-        self.image = pygame.Surface((PLATFORM_WIDTH, PLATFORM_HEIGHT))
-        self.image.fill(PLATFORM_COLOR)
+        self.image = pygame.Surface((self._platform_w(), self._platform_h()))
+        self.image.fill(self._platform_rgb())
 
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -130,8 +118,8 @@ def generate_platforms(num_platforms: int) -> tuple[Any, Any]:
 
     for _ in range(num_platforms):
 
-        x = random.randint(0, SCREEN_WIDTH - PLATFORM_WIDTH)
-        y = random.randint(0, SCREEN_HEIGHT - PLATFORM_HEIGHT)
+        x = random.randint(0, Constants._screen_w() - Constants._platform_w())
+        y = random.randint(0, Constants._screen_h() - Constants._platform_h())
         platform = Platform(x, y)   # object / isntantiation of platform class
         platform_sprites.add(platform)     # adding the instanced platform to group Platform
 
@@ -152,7 +140,7 @@ def calculate_vector(start_left_click: tuple, end_left_click: tuple) -> tuple:
     distance = math.sqrt(dx ** 2 + dy ** 2)
 
     #scale the strength
-    strength = min(distance / 10, MAX_JUMP_STRENGTH)
+    strength = min(distance / 10, Constants._max_jump())
     angle = math.atan2(dy, dx)
 
     #invert x-axis for leftward jump
@@ -182,7 +170,7 @@ def main() -> None:
     background_image = pygame.image.load('background.png').convert() # loading image
     player = Player() # create sprite
     platforms, lowest_platform = generate_platforms(10) # manually choose number of platforms here
-    player.rect.center = (lowest_platform.rect.centerx, lowest_platform.rect.top - PLAYER_HEIGHT // 2)
+    player.rect.center = (lowest_platform.rect.centerx, lowest_platform.rect.top - Constants._player_h() // 2)
     
     # these lines work when creating one player, but will be moved when creating multiplayer
     all_sprites = pygame.sprite.Group() 
@@ -237,11 +225,11 @@ def main() -> None:
         
         if game_over:
             # display_text(str, color, x_pos, y_pos)
-            display_text('Game Over', (255, 0, 0), (SCREEN_WIDTH // 2 - 100), (SCREEN_HEIGHT // 2 - 50))
-            display_text(f'Score: {score}', (255, 255, 255), (SCREEN_WIDTH // 2 - 100), (SCREEN_HEIGHT // 2))
+            display_text('Game Over', (255, 0, 0), (Constants._screen_w() // 2 - 100), (Constants._screen_h() // 2 - 50))
+            display_text(f'Score: {score}', (255, 255, 255), (Constants._screen_w() // 2 - 100), (Constants._screen_h() // 2))
 
         pygame.display.flip()
-        clock.tick(FPS)
+        clock.tick(Constants._fps())
 
 
 if __name__ == "__main__":
