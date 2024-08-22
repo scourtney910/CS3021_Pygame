@@ -48,6 +48,9 @@ class Player(pygame.sprite.Sprite, Constants):
         if self.is_jumping:
 
             self.velocity_y += self._grav()
+            # too high a velocity will cause the player to 
+            # fall through platforms before the collision can be checked
+            self.velocity_y = min(self.velocity_y, self._max_velocity())
 
             self.rect.y += self.velocity_y
             self.rect.x += self.velocity_x
@@ -57,45 +60,53 @@ class Player(pygame.sprite.Sprite, Constants):
                 return True
 
         # Wrap around the screen
-        if self.rect.right < 0:
-            self.rect.left = self._screen_w()
+        if self.rect.right > (self._screen_w() + (self._player_w() / 2)):
+            # if half the player sprite is off the right side of the screen
+            self.rect.left = 0 - (self._player_w() / 2)
+            # move the player to the left side of the screen, but half-off
 
-        elif self.rect.left > self._screen_w():
-            self.rect.right = 0
+        elif self.rect.left < (0 - self._player_w() / 2):
+            # if half the player sprite is off the left side of the screen
+            self.rect.right = self._screen_w() + (self._player_w() / 2)
+            # move the player to the right side of the screen, but half-off
         
         # All previous checks did not change the state of play
         return False
 
 
-    def check_collision(self, platforms: Any) -> None:
+    def check_collision(self, platforms: Any, touched_platforms: set, score: int) -> int:
         """
         Check for collision only when falling.
         To change the platforms structure,
         change the generate_platforms function below.
-        ***Need to add collision for bottom of platforms***
         """
+        # collision_detection is a list of platforms the player sprite has touched each game loop
+        collision_detection = pygame.sprite.spritecollide(self, platforms, False)
 
-        #"if sprite is falling", (+)velocity_y means falling and neg means jumping
-        if self.velocity_y > 0:
-
-            hits = pygame.sprite.spritecollide(self, platforms, False) #hits is a list of something about collisions
-            # sprite collide checks for collision of sprite and platforms and returns lists
-            
-            #if hits != None, i.e., if the player is hitting something
-            if hits:
+        for platform in collision_detection:
+            # "if sprite is falling", (+)velocity_y means falling and neg means jumping
+            if (self.velocity_y > 0):
+                # continue with normal collision routine
                 # this code for bottom of char and top of platform
-                # should use if-statement for bottom and another if-statement for top
+                if (self.rect.bottom <= platform.rect.top + 20):
+                    self.rect.bottom = platform.rect.top
+                    # assigning player bottom to top of platform represented by rect top,
+                    # i.e. only works because the only thing the player can hit is a platform
+                    self.velocity_y = 0
+                    self.is_jumping = False
+
+                if platform not in touched_platforms:
+                    # fix the score-variable to increment only when 
+                    # the player touches a new platform on screen
+                    touched_platforms.add(platform)
+                    score += 1
                 
-                self.rect.bottom = hits[0].rect.top
-                # assigning player bottom to top of platform represented by rect top,
-                # i.e. only wokrs because the only thing the player can hit is a platform
-                
-                self.velocity_y = 0
-                self.is_jumping = False
+        return score
 
 
 class Platform(pygame.sprite.Sprite, Constants):
-    """define platform size and color using pygame module"""
+    """define platform size and color using pygame module
+    attributes must be referenced later"""
 
     def __init__(self, x, y):
 
@@ -106,6 +117,7 @@ class Platform(pygame.sprite.Sprite, Constants):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.was_touched = False    # new boolean added
 
 
 def generate_platforms(num_platforms: int) -> tuple[Any, Any]:
@@ -182,6 +194,7 @@ def main() -> None:
     start_left_click = (0, 0) # initialize tuple here for mouse position
     score = 0
     game_over = False
+    touched_platforms = set()    # to be used in the score mechanic
 
     #main game-loop
     while True:
@@ -211,9 +224,9 @@ def main() -> None:
         #And the player made a successful jump
         if not game_over:
             game_over = player.update() # player movement takes place here
-            player.check_collision(platforms) # check for collisions after sprite is updated each frame
-            if not player.is_jumping:
-                score += 1
+
+            # check for collisions after sprite is updated each frame
+            score = player.check_collision(platforms, touched_platforms, score)
 
         # background image setter
         # randomize background_image later
