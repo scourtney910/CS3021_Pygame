@@ -11,6 +11,7 @@ class Constants:
     _PLATFORM_HEIGHT   = 20
     _PLATFORM_COLOR    = (random.randint(0,255), random.randint(0,255), random.randint(0,255))
     _MAX_JUMP_STRENGTH = 20
+    _MAX_VELOCITY      = 25
 
     @classmethod
     def _screen_w(cls):
@@ -51,3 +52,7 @@ class Constants:
     @classmethod
     def _max_jump(cls):
         return cls._MAX_JUMP_STRENGTH
+    
+    @classmethod
+    def _max_velocity(cls):
+        return cls._MAX_VELOCITY
