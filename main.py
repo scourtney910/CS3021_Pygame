@@ -1,4 +1,5 @@
 from constants import Constants
+import csv
 import math
 import pygame
 from random import randint
@@ -64,6 +65,29 @@ def calculate_vector(start_left_click: tuple, end_left_click: tuple) -> tuple:
     vector_y = -strength * math.sin(angle)
 
     return (vector_x, vector_y)
+
+
+def save_score(score: int) -> int:
+    # Read the existing score from the file
+    try:
+        with open("highScore.csv", "r") as csvfile:
+            content = csvfile.readline()
+            if content:
+                high_score = int(content)
+            else:
+                high_score = 0
+
+    except FileNotFoundError:
+        # If the file does not exist, set the high_score to 0
+        high_score = 0
+
+    # Check if the new score is higher than the existing high score
+    if score > high_score:
+        with open("highScore.csv", "w") as csvfile:
+            csvfile.write(str(score))
+        return score
+    else:
+        return high_score
 
 
 def display_text(text: str, color: tuple, x: int, y: int) -> None:
@@ -143,16 +167,25 @@ def main() -> None:
         all_sprites.draw(screen)
 
         if game_over:
+            # save player score to a CSV
+            highscore = save_score(score)
+
             # display_text(str, color, x_pos, y_pos)
             display_text(
                 "Game Over",
                 (255, 0, 0),
                 (Constants._screen_w() // 2 - 100),
-                (Constants._screen_h() // 2 - 50),
+                (Constants._screen_h() // 2 - 100),
             )
             display_text(
                 f"Score: {score}",
                 (255, 255, 255),
+                (Constants._screen_w() // 2 - 100),
+                (Constants._screen_h() // 2 - 50),
+            )
+            display_text(
+                f"High Score: {highscore}",
+                (0, 255, 255),
                 (Constants._screen_w() // 2 - 100),
                 (Constants._screen_h() // 2),
             )

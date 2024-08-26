@@ -83,7 +83,7 @@ class Player(pygame.sprite.Sprite, Constants):
                     self.velocity_y = 0
                     self.is_jumping = False
 
-                if platform not in touched_platforms:
+                if (platform not in touched_platforms) and (self.velocity_y == 0):
                     # fix the score-variable to increment only when
                     # the player touches a new platform on screen
                     touched_platforms.add(platform)
