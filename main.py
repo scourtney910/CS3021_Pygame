@@ -21,13 +21,17 @@ font = pygame.font.SysFont(None, 55)
 ##############################################################
 
 
-def generate_platforms(num_platforms: int) -> tuple[Any, Any]:
-    """randomly generate rectangle platforms and return:
-    pygame.sprite.Group: Any, lowest_platform.sprite: Any"""
+def generate_platforms(num_platforms: int) -> tuple[Any, Any, Any]:
+    """
+    randomly generate rectangle platforms and return:
+    pygame.sprite.Group: Any, lowest_platform.sprite: Any, highest_platform.sprite: Any
+    """
 
     platform_sprites = pygame.sprite.Group()
     lowest_y = 0
+    highest_y = Constants._screen_h()
     lowest_platform = None
+    highest_platform = None
 
     for _ in range(num_platforms):
 
@@ -42,7 +46,36 @@ def generate_platforms(num_platforms: int) -> tuple[Any, Any]:
             lowest_y = y  # update the if-condition for every for-loop iteration
             lowest_platform = platform  # update the future return value
 
-    return platform_sprites, lowest_platform
+        if y < highest_y:
+            highest_y = y
+            highest_platform = platform
+
+    return platform_sprites, lowest_platform, highest_platform
+
+
+def refresh_screen(all_sprites, player, platforms, touched_platforms, highest_platform):
+    """
+    Once the player reaches the top platform on screen, translate player position and platform position to the bottom of the screen.
+    Then, generate new platforms above it. New platform attributes get reset manually before function return.
+    """
+    new_player_bottom = Constants._screen_h() - Constants._platform_h()
+    player.rect.bottom = new_player_bottom  # preserves player x-location, changing y
+
+    restart_platform = Platform(highest_platform.rect.x, Constants._screen_h())
+
+    touched_platforms.clear()
+    for platform in platforms:
+        platform.kill()
+        all_sprites.remove(platform)
+
+    new_platforms, lowest_platform, highest_platform = generate_platforms(9)
+    lowest_platform = restart_platform
+    lowest_platform.was_touched = True
+    touched_platforms.add(lowest_platform)
+    all_sprites.add(lowest_platform)
+    all_sprites.add(new_platforms)
+
+    return all_sprites, lowest_platform, highest_platform
 
 
 def calculate_vector(start_left_click: tuple, end_left_click: tuple) -> tuple:
@@ -108,7 +141,7 @@ def main() -> None:
     background_image = pygame.image.load("background.png").convert()  # loading image
     player = Player()  # create sprite
     # manually choose number of platforms here
-    platforms, lowest_platform = generate_platforms(10)
+    platforms, lowest_platform, highest_platform = generate_platforms(10)
     player.rect.center = (
         lowest_platform.rect.centerx,
         lowest_platform.rect.top - Constants._player_h() // 2,
@@ -157,6 +190,11 @@ def main() -> None:
 
             # check for collisions after sprite is updated each frame
             score = player.check_collision(platforms, touched_platforms, score)
+
+        if highest_platform in touched_platforms:
+            all_sprites, lowest_platform, highest_platform = refresh_screen(
+                all_sprites, player, platforms, touched_platforms, highest_platform
+            )
 
         # background image setter
         # randomize background_image later
