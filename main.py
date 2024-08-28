@@ -5,6 +5,7 @@ import pygame
 from random import randint
 from sprite import Player, Platform
 from sys import exit
+from time import sleep
 from typing import Any
 
 
@@ -58,24 +59,39 @@ def refresh_screen(all_sprites, player, platforms, touched_platforms, highest_pl
     Once the player reaches the top platform on screen, translate player position and platform position to the bottom of the screen.
     Then, generate new platforms above it. New platform attributes get reset manually before function return.
     """
+    # Set the player's position to the bottom of the screen
     new_player_bottom = Constants._screen_h() - Constants._platform_h()
     player.rect.bottom = new_player_bottom  # preserves player x-location, changing y
 
-    restart_platform = Platform(highest_platform.rect.x, Constants._screen_h())
+    # Create a new platform at the bottom of the screen with the same x position as the highest platform
+    restart_platform = Platform(highest_platform.rect.x, Constants._screen_h() - Constants._platform_h())
 
+    # Remove all old platforms
+    for platform in platforms.sprites():
+        platform.kill()  # This removes the sprite from all groups and flags it for deletion
+
+    # Clear the sprite groups
     touched_platforms.clear()
-    for platform in platforms:
-        platform.kill()
-        all_sprites.remove(platform)
+    platforms.empty()
+    all_sprites.empty()
 
-    new_platforms, lowest_platform, highest_platform = generate_platforms(9)
-    lowest_platform = restart_platform
-    lowest_platform.was_touched = True
-    touched_platforms.add(lowest_platform)
-    all_sprites.add(lowest_platform)
+    # Add the restart platform to the groups before generating new platforms
+    platforms.add(restart_platform)
+    all_sprites.add(restart_platform)
+    all_sprites.add(player)    # the empty() above removed the player
+
+    # Generate new platforms and add them to the groups
+    new_platforms, lowest_platform, new_highest_platform = generate_platforms(9)
+
+    # Add the new platforms to the sprite groups
+    platforms.add(new_platforms)
     all_sprites.add(new_platforms)
 
-    return all_sprites, lowest_platform, highest_platform
+    # Update the touched platforms
+    restart_platform.was_touched = True
+    touched_platforms.add(restart_platform)
+
+    return all_sprites, restart_platform, new_highest_platform
 
 
 def calculate_vector(start_left_click: tuple, end_left_click: tuple) -> tuple:
@@ -195,9 +211,9 @@ def main() -> None:
             all_sprites, lowest_platform, highest_platform = refresh_screen(
                 all_sprites, player, platforms, touched_platforms, highest_platform
             )
+            sleep(0.5)
 
         # background image setter
-        # randomize background_image later
         screen.blit(background_image, (0, 0))
 
         # drawing updated character position each frame.
