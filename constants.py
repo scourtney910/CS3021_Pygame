@@ -11,8 +11,14 @@ class Constants:
     _PLATFORM_WIDTH = 100
     _PLATFORM_HEIGHT = 20
     _PLATFORM_COLOR = (randint(0, 255), randint(0, 255), randint(0, 255))
+    _ITEM_SCORE = 5
+    _PLATFORM_SCORE = 1
+    _ITEM_SIZE = 25
+    _ITEM_XOFFSET = 38
+    _ITEM_YOFFSET = 30
     _MAX_JUMP_STRENGTH = 20
     _MAX_VELOCITY = 25
+    _EVEN = 2
 
     @classmethod
     def _screen_w(cls):
@@ -49,6 +55,26 @@ class Constants:
     @classmethod
     def _platform_rgb(cls):
         return cls._PLATFORM_COLOR
+    
+    @classmethod
+    def _item_score(cls):
+        return cls._ITEM_SCORE
+    
+    @classmethod
+    def _platform_score(cls):
+        return cls._PLATFORM_SCORE
+    
+    @classmethod
+    def _item_size(cls):
+        return cls._ITEM_SIZE
+    
+    @classmethod
+    def _item_xoffset(cls):
+        return cls._ITEM_XOFFSET
+
+    @classmethod
+    def _item_yoffset(cls):
+        return cls._ITEM_YOFFSET
 
     @classmethod
     def _max_jump(cls):
@@ -57,3 +83,7 @@ class Constants:
     @classmethod
     def _max_velocity(cls):
         return cls._MAX_VELOCITY
+
+    @classmethod
+    def _even(cls):
+        return cls._EVEN
