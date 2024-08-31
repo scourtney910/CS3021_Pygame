@@ -3,7 +3,7 @@ import csv
 import math
 import pygame
 from random import randint
-from sprite import Player, Platform
+from sprites import Player, Platform, Items
 from sys import exit
 from time import sleep
 from typing import Any
@@ -22,19 +22,21 @@ font = pygame.font.SysFont(None, 55)
 ##############################################################
 
 
-def generate_platforms(num_platforms: int) -> tuple[Any, Any, Any]:
+def generate_platforms(num_platforms: int) -> tuple[Any, Any, Any, Any]:
     """
     randomly generate rectangle platforms and return:
-    pygame.sprite.Group: Any, lowest_platform.sprite: Any, highest_platform.sprite: Any
+    platform_sprites.Group: Any, item_sprites.Group: Any, lowest_platform.sprite: Any, highest_platform.sprite: Any
     """
 
     platform_sprites = pygame.sprite.Group()
+    item_sprites = pygame.sprite.Group()
     lowest_y = 0
     highest_y = Constants._screen_h()
     lowest_platform = None
     highest_platform = None
+    lowest_item = None
 
-    for _ in range(num_platforms):
+    for i in range(num_platforms):
 
         x = randint(0, Constants._screen_w() - Constants._platform_w())
         y = randint(0, Constants._screen_h() - Constants._platform_h())
@@ -43,18 +45,34 @@ def generate_platforms(num_platforms: int) -> tuple[Any, Any, Any]:
         # adding the instanced platform to group Platform
         platform_sprites.add(platform)
 
+        # generate a random number check. If it's even, create an item platform
+        if (randint(0, Constants._screen_w()) % Constants._even()) or (i == 0):
+            # for the i == 0 case, we need to create at least one item for lowest_item
+            item = Items(x + Constants._item_xoffset(), y - Constants._item_yoffset())
+
+        # try to add items. If item was not created during this loop - pass
+        try:
+            item_sprites.add(item)
+        except:
+            pass
+
         if y > lowest_y:
             lowest_y = y  # update the if-condition for every for-loop iteration
             lowest_platform = platform  # update the future return value
+            try:
+                lowest_item = item  # keep track of lowest item
+            except:
+                pass
 
         if y < highest_y:
             highest_y = y
             highest_platform = platform
 
-    return platform_sprites, lowest_platform, highest_platform
+    lowest_item.kill() # remove the item from the player's starting platform
+    return platform_sprites, item_sprites, lowest_platform, highest_platform
 
 
-def refresh_screen(all_sprites, player, platforms, touched_platforms, highest_platform):
+def refresh_screen(all_sprites, player, platforms, items, touched_platforms, highest_platform):
     """
     Once the player reaches the top platform on screen, translate player position and platform position to the bottom of the screen.
     Then, generate new platforms above it. New platform attributes get reset manually before function return.
@@ -66,13 +84,17 @@ def refresh_screen(all_sprites, player, platforms, touched_platforms, highest_pl
     # Create a new platform at the bottom of the screen with the same x position as the highest platform
     restart_platform = Platform(highest_platform.rect.x, Constants._screen_h() - Constants._platform_h())
 
-    # Remove all old platforms
+    # Remove all old sprites
     for platform in platforms.sprites():
         platform.kill()  # This removes the sprite from all groups and flags it for deletion
+    
+    for item in items.sprites():
+        item.kill()
 
     # Clear the sprite groups
     touched_platforms.clear()
     platforms.empty()
+    items.empty()
     all_sprites.empty()
 
     # Add the restart platform to the groups before generating new platforms
@@ -81,11 +103,15 @@ def refresh_screen(all_sprites, player, platforms, touched_platforms, highest_pl
     all_sprites.add(player)    # the empty() above removed the player
 
     # Generate new platforms and add them to the groups
-    new_platforms, lowest_platform, new_highest_platform = generate_platforms(9)
+    new_platforms, new_item_sprites, lowest_platform, new_highest_platform = generate_platforms(9)
 
     # Add the new platforms to the sprite groups
     platforms.add(new_platforms)
     all_sprites.add(new_platforms)
+    
+    # Add the new platforms to the sprite groups
+    items.add(new_item_sprites)
+    all_sprites.add(new_item_sprites)
 
     # Update the touched platforms
     restart_platform.was_touched = True
@@ -101,7 +127,7 @@ def calculate_vector(start_left_click: tuple, end_left_click: tuple) -> tuple:
 
     dx = end_left_click[0] - start_left_click[0]
     dy = end_left_click[1] - start_left_click[1]
-    distance = math.sqrt(dx**2 + dy**2)
+    distance = math.sqrt(dx ** 2 + dy ** 2)
 
     # scale the strength
     strength = min(distance / 10, Constants._max_jump())
@@ -157,16 +183,17 @@ def main() -> None:
     background_image = pygame.image.load("background.png").convert()  # loading image
     player = Player()  # create sprite
     # manually choose number of platforms here
-    platforms, lowest_platform, highest_platform = generate_platforms(10)
+    platforms, items, lowest_platform, highest_platform = generate_platforms(10)
     player.rect.center = (
         lowest_platform.rect.centerx,
         lowest_platform.rect.top - Constants._player_h() // 2,
     )
 
-    # these lines work when creating one player, but will be moved when creating multiplayer
+    # these lines work when creating one player, but would be moved when creating multiplayer
     all_sprites = pygame.sprite.Group()
     all_sprites.add(player)
     all_sprites.add(platforms)
+    all_sprites.add(items)
 
     # initialize starting values
     dragging = False
@@ -205,11 +232,11 @@ def main() -> None:
             game_over = player.update()  # player movement takes place here
 
             # check for collisions after sprite is updated each frame
-            score = player.check_collision(platforms, touched_platforms, score)
+            score = player.check_collision(platforms, items, touched_platforms, score)
 
         if highest_platform in touched_platforms:
             all_sprites, lowest_platform, highest_platform = refresh_screen(
-                all_sprites, player, platforms, touched_platforms, highest_platform
+                all_sprites, player, platforms, items, touched_platforms, highest_platform
             )
             sleep(0.5)
 

@@ -61,17 +61,17 @@ class Player(pygame.sprite.Sprite, Constants):
         return False
 
     def check_collision(
-        self, platforms: Any, touched_platforms: set, score: int
+        self, platforms: Any, items: Any, touched_platforms: set, score: int
     ) -> int:
         """
         Check for collision only when falling.
         To change the platforms structure,
         change the generate_platforms function in main.
         """
-        # collision_detection is a list of platforms the player sprite has touched each game loop
-        collision_detection = pygame.sprite.spritecollide(self, platforms, False)
+        # platform_collision_detection is a list of platforms the player sprite has touched each game loop
+        platform_collision_detection = pygame.sprite.spritecollide(self, platforms, False)
 
-        for platform in collision_detection:
+        for platform in platform_collision_detection:
             # "if sprite is falling", (+)velocity_y means falling and neg means jumping
             if self.velocity_y > 0:
                 # continue with normal collision routine
@@ -84,10 +84,17 @@ class Player(pygame.sprite.Sprite, Constants):
                     self.is_jumping = False
 
                 if (platform not in touched_platforms) and (self.velocity_y == 0):
-                    # fix the score-variable to increment only when
+                    # The score-variable will only increment when
                     # the player touches a new platform on screen
                     touched_platforms.add(platform)
                     score += 1
+
+        # similarly for items, only remove the item if it's collected
+        item_collision_detection = pygame.sprite.spritecollide(self, items, False)
+        
+        for item in item_collision_detection:
+            item.kill()
+            score += Constants._item_score()
 
         return score
 
@@ -105,4 +112,21 @@ class Platform(pygame.sprite.Sprite, Constants):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.was_touched = False  # new boolean added
+        self.was_touched = False # used for collision
+
+class Items(pygame.sprite.Sprite, Constants):
+    """define item size and color using pygame module,
+    attributes must be referenced later"""
+
+    def __init__(self, x, y):
+        super().__init__()
+        self.original_image = pygame.image.load("strawberry.png").convert_alpha()
+        self.image = pygame.transform.scale(
+            self.original_image, (self._item_size(), self._item_size())
+        )
+
+        # creating rectangular object with width x and height y
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.was_touched = False  # used for collision
