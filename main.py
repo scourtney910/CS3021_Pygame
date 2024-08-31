@@ -3,7 +3,7 @@ import csv
 import math
 import pygame
 from random import randint
-from sprite import Player, Platform, Items
+from sprites import Player, Platform, Items
 from sys import exit
 from time import sleep
 from typing import Any
