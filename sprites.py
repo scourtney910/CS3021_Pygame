@@ -1,10 +1,11 @@
 from constants import Constants
-import pygame
 from typing import Any
+import pygame
 
 
 class Player(pygame.sprite.Sprite, Constants):
     """define player functionality"""
+
 
     def __init__(self):
         """Initialize all the player attributes"""
@@ -22,12 +23,14 @@ class Player(pygame.sprite.Sprite, Constants):
         self.velocity_x = 0
         self.is_jumping = False
 
+
     def jump(self, vector: tuple) -> None:
         """change player state to recognize sprite jumping
         vector expected is from the calculate_vector function"""
 
         self.velocity_x, self.velocity_y = vector
         self.is_jumping = True
+
 
     def update(self):
         """update player position on screen based on changing attributes"""
@@ -59,6 +62,7 @@ class Player(pygame.sprite.Sprite, Constants):
 
         # All previous checks did not change the state of play
         return False
+
 
     def check_collision(
         self, platforms: Any, items: Any, touched_platforms: set, score: int
@@ -113,6 +117,7 @@ class Platform(pygame.sprite.Sprite, Constants):
         self.rect.x = x
         self.rect.y = y
         self.was_touched = False # used for collision
+
 
 class Items(pygame.sprite.Sprite, Constants):
     """define item size and color using pygame module,
