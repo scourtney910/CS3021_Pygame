@@ -79,7 +79,7 @@ def play():
         # drawing updated character position each frame.
         # Would apply to platforms if they were also moving
         all_sprites.draw(screen)
-        add_score_display(score)
+        always_display_score(score)
 
         pygame.display.flip()
         clock.tick(Constants._fps())
@@ -119,7 +119,7 @@ def game_over_screen(score):
         )
 
         # impliment restart button tie-in
-        pygame.draw.rect(screen, (0, 255, 0), button_rect)
+        pygame.draw.rect(screen, (128, 239, 128), button_rect)
         display_text("Restart", (255, 255, 255), button_rect.x + 40, button_rect.y + 5)
         pygame.display.flip()
 
