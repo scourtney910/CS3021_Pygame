@@ -32,7 +32,7 @@ class Player(pygame.sprite.Sprite, Constants):
         self.is_jumping = True
 
 
-    def update(self):
+    def update(self) -> bool:
         """update player position on screen based on changing attributes"""
 
         if self.is_jumping:
@@ -107,7 +107,7 @@ class Platform(pygame.sprite.Sprite, Constants):
     """define platform size and color using pygame module
     attributes must be referenced later"""
 
-    def __init__(self, x, y):
+    def __init__(self, x: int, y: int):
 
         super().__init__()
         self.image = pygame.Surface((self._platform_w(), self._platform_h()))
@@ -123,7 +123,7 @@ class Items(pygame.sprite.Sprite, Constants):
     """define item size and color using pygame module,
     attributes must be referenced later"""
 
-    def __init__(self, x, y):
+    def __init__(self, x: int, y: int):
         super().__init__()
         self.original_image = pygame.image.load("strawberry.png").convert_alpha()
         self.image = pygame.transform.scale(

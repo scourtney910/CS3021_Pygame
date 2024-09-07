@@ -9,7 +9,7 @@ import pygame
 # pygame initialized in screens.py for easier workflow
 
 
-def play():
+def play() -> None:
     """Main game loop"""
     # Load background image and sprites
     background_image = pygame.image.load("background.png").convert()  # loading image
@@ -89,7 +89,7 @@ def play():
     game_over_screen(score)
 
 
-def game_over_screen(score):
+def game_over_screen(score: int) -> None:
     """Display the 'Game Over' screen and handle restart."""
     # save player score to a CSV
     highscore = save_score(score)
@@ -137,7 +137,7 @@ def game_over_screen(score):
                     restart()    # play the game loop from the beginning
 
 
-def restart():
+def restart() -> None:
     """Restart the game by re-entering the game loop"""
     play()
 
