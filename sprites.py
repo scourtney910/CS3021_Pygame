@@ -110,8 +110,12 @@ class Platform(pygame.sprite.Sprite, Constants):
     def __init__(self, x: int, y: int):
 
         super().__init__()
-        self.image = pygame.Surface((self._platform_w(), self._platform_h()))
-        self.image.fill(self._platform_rgb())
+        self.original_image = pygame.image.load("platform.png").convert_alpha()
+        self.image = pygame.transform.scale(
+          self.original_image, (self._platform_w(), self._platform_h())
+        )
+        # self.image = pygame.Surface((self._platform_w(), self._platform_h()))
+        # self.image.fill(self._platform_rgb())
 
         self.rect = self.image.get_rect()
         self.rect.x = x

@@ -1,6 +1,3 @@
-from random import randint
-
-
 class Constants:
     _SCREEN_WIDTH = 800
     _SCREEN_HEIGHT = 600
@@ -10,7 +7,6 @@ class Constants:
     _PLAYER_HEIGHT = 50
     _PLATFORM_WIDTH = 100
     _PLATFORM_HEIGHT = 20
-    _PLATFORM_COLOR = (randint(0, 255), randint(0, 255), randint(0, 255))
     _ITEM_SCORE = 5
     _PLATFORM_SCORE = 1
     _ITEM_SIZE = 25
@@ -51,10 +47,6 @@ class Constants:
     @classmethod
     def _platform_h(cls):
         return cls._PLATFORM_HEIGHT
-
-    @classmethod
-    def _platform_rgb(cls):
-        return cls._PLATFORM_COLOR
     
     @classmethod
     def _item_score(cls):

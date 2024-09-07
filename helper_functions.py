@@ -27,7 +27,7 @@ def generate_platforms(num_platforms: int) -> tuple[Any, Any, Any, Any]:
     for i in range(num_platforms):
 
         x = randint(0, Constants._screen_w() - Constants._platform_w())
-        y = randint(0, Constants._screen_h() - Constants._platform_h())
+        y = randint(30, Constants._screen_h() - Constants._platform_h())
         platform = Platform(x, y)  # object / isntantiation of platform class
 
         # adding the instanced platform to group Platform
@@ -93,7 +93,7 @@ def refresh_screen(
     all_sprites.add(player)    # the empty() above removed the player
 
     # Generate new platforms and add them to the groups
-    new_platforms, new_item_sprites, lowest_platform, new_highest_platform = generate_platforms(9)
+    new_platforms, new_item_sprites, lowest_platform, new_highest_platform = generate_platforms(7)
 
     # Add the new platforms to the sprite groups
     platforms.add(new_platforms)
