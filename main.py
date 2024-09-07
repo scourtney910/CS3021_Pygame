@@ -4,7 +4,7 @@ from screens import *
 from helper_functions import *
 from sys import exit
 from time import sleep
-from typing import Any
+from typing import Any, Union, Self
 import pygame
 # pygame initialized in screens.py for easier workflow
 
@@ -15,7 +15,7 @@ def play():
     background_image = pygame.image.load("background.png").convert()  # loading image
     player = Player()  # create sprite
     # manually choose number of platforms here
-    platforms, items, lowest_platform, highest_platform = generate_platforms(10)
+    platforms, items, lowest_platform, highest_platform = generate_platforms(8)
     player.rect.center = (
         lowest_platform.rect.centerx,
         lowest_platform.rect.top - Constants._player_h() // 2,
