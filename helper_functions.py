@@ -57,8 +57,13 @@ def generate_platforms(num_platforms: int) -> tuple[Any, Any, Any, Any]:
 
 
 def refresh_screen(
-        all_sprites: Any, player: Any, platforms: Any, items: Any, touched_platforms: set, highest_platform: Any
-) -> tuple[Any, Any, Any]:
+        all_sprites: Any, 
+        player: Any, 
+        platforms: Any, 
+        items: Any, 
+        touched_platforms: set, 
+        highest_platform: Any
+        ) -> tuple[Any, Any, Any]:
     """
     Once the player reaches the top platform on screen, translate player position and platform position to the bottom of the screen.
     Then, generate new platforms above it. New platform attributes get reset manually before function return.
