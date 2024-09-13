@@ -136,7 +136,7 @@ def game_over_screen(score: int) -> None:
         # Since we are out of the game loop, we need to account for
         # whenever we quit the game (exiting the window).
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:  # Quit = Red x on the top right of the window
+            if event.type == pygame.QUIT:  # Quit = Red x on the top right of the window.
                 pygame.quit()
                 exit()
 
