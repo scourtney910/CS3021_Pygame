@@ -110,6 +110,12 @@ class Player(pygame.sprite.Sprite, Constants):
             item.kill()
             score += Constants._item_score()
 
+            # Make a sound collecting the item.
+            item_get = pygame.mixer.Sound("denethor.mp3")
+            item_get.set_volume(0.9)
+            item_get.play()
+            score += Constants._item_score()
+
         return score
 
 
