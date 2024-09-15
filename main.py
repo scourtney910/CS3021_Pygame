@@ -14,6 +14,13 @@ def play() -> None:
     # Load background image and sprites.
     background_image = pygame.image.load("background.png").convert()  # Loading image.
     player = Player()  # Create the player sprite.
+
+    # Set the music.
+    pygame.mixer.init()
+    pygame.mixer.music.load("testmusic.mp3")
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
+
     # Manually choose number of platforms here...
     platforms, items, lowest_platform, highest_platform = generate_platforms(8)
     player.rect.center = (
