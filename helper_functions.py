@@ -23,7 +23,7 @@ def generate_platforms(num_platforms: int) -> tuple[Any, Any, Any, Any]:
     for i in range(num_platforms):
 
         x = randint(0, Constants._screen_w() - Constants._platform_w())
-        y = randint(30, Constants._screen_h() - Constants._platform_h())
+        y = randint(Constants._platform_max(), Constants._screen_h() - Constants._platform_h())
         platform = Platform(x, y)  # Object / isntantiation of platform class.
 
         # Adding the instanced platform to the group Platform.
@@ -94,7 +94,7 @@ def refresh_screen(
     all_sprites.add(player)
 
     # Generate new platforms and add them to the groups.
-    new_platforms, new_item_sprites, lowest_platform, new_highest_platform = generate_platforms(7)
+    new_platforms, new_item_sprites, lowest_platform, new_highest_platform = generate_platforms(Constants._num_platforms() - 1)
 
     # Add the new platforms to the sprite groups.
     platforms.add(new_platforms)
@@ -114,12 +114,12 @@ def calculate_vector(start_left_click: tuple, end_left_click: tuple) -> tuple[fl
     Return a tuple where each vector element carries a magnitude and radian position.
     """
 
-    dx = end_left_click[0] - start_left_click[0]
-    dy = end_left_click[1] - start_left_click[1]
-    distance = math.sqrt(dx ** 2 + dy ** 2)
+    dx = end_left_click[Constants._mouse_click_x()] - start_left_click[Constants._mouse_click_x()]
+    dy = end_left_click[Constants._mouse_click_y()] - start_left_click[Constants._mouse_click_y()]
+    distance = math.sqrt(dx * dx + dy * dy)
 
     # Scale the jump strength.
-    strength = min(distance / 10, Constants._max_jump())
+    strength = min(distance / Constants._jump_factor(), Constants._max_jump())
     angle = math.atan2(dy, dx)
 
     # Invert x-axis for leftward jump.
