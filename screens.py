@@ -8,8 +8,8 @@ pygame.init()
 screen = pygame.display.set_mode((Constants._screen_w(), Constants._screen_h()))
 pygame.display.set_caption("Jump King + Doodle Jump")
 clock = pygame.time.Clock()
-font = pygame.font.SysFont(None, 55)        # Regular font for all text graphics.
-small_font = pygame.font.SysFont(None, 30)  # Starting screen font.
+font = pygame.font.SysFont(None, Constants._lg_font())        # Regular font for all text graphics.
+small_font = pygame.font.SysFont(None, Constants._sm_font())  # Starting screen font.
 
 
 def display_text(text: str, color: tuple, x: int, y: int) -> None:

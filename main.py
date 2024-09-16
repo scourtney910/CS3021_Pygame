@@ -116,7 +116,7 @@ def game_over_screen(score: int) -> None:
     )
 
     while True:
-        screen.fill((0, 0, 0))  # Overwrite the screen with a black background.
+        screen.fill(Constants._black())  # Overwrite the screen with a black background.
 
         # display_text(str, color, x_pos, y_pos)
         display_text(
