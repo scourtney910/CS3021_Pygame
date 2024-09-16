@@ -89,7 +89,7 @@ class Player(pygame.sprite.Sprite, Constants):
                 # Continue with normal collision routine.
 
                 # This code is for the bottom of the player and the top of the platform:
-                if self.rect.bottom <= platform.rect.top + 20:
+                if self.rect.bottom <= platform.rect.top + self._platform_collision_buf():
                     self.rect.bottom = platform.rect.top
 
                     # Assigning player bottom to the top of a platform represented by rect.top.
@@ -112,7 +112,7 @@ class Player(pygame.sprite.Sprite, Constants):
 
             # Make a sound collecting the item.
             item_get = pygame.mixer.Sound("denethor.mp3")
-            item_get.set_volume(0.9)
+            item_get.set_volume(self._item_vol())
             item_get.play()
             score += Constants._item_score()
 

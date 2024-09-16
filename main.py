@@ -18,11 +18,11 @@ def play() -> None:
     # Set the music.
     pygame.mixer.init()
     pygame.mixer.music.load("testmusic.mp3")
-    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.set_volume(Constants._bg_vol())
     pygame.mixer.music.play(-1)
 
     # Manually choose number of platforms here...
-    platforms, items, lowest_platform, highest_platform = generate_platforms(8)
+    platforms, items, lowest_platform, highest_platform = generate_platforms(Constants._num_platforms())
     player.rect.center = (
         lowest_platform.rect.centerx,
         lowest_platform.rect.top - Constants._player_h() // 2,
@@ -85,7 +85,7 @@ def play() -> None:
                 touched_platforms,
                 highest_platform,
             )
-            sleep(0.5)
+            sleep(Constants._screen_change())
 
         # Background image setter.
         screen.blit(background_image, (0, 0))
@@ -109,7 +109,10 @@ def game_over_screen(score: int) -> None:
     # Save player score to a CSV.
     highscore = save_score(score)
     button_rect = pygame.Rect(
-        Constants._screen_w() // 2 - 100, Constants._screen_h() // 2 + 50, 200, 50
+        Constants._screen_w() // 2 - Constants._display_offset(),
+        Constants._screen_h() // 2 + Constants._button_h(),
+        Constants._button_w(),
+        Constants._button_h()
     )
 
     while True:
@@ -118,26 +121,26 @@ def game_over_screen(score: int) -> None:
         # display_text(str, color, x_pos, y_pos)
         display_text(
             "Game Over",
-            (255, 0, 0),
-            (Constants._screen_w() // 2 - 100),
-            (Constants._screen_h() // 2 - 100),
+            Constants._red(),
+            (Constants._screen_w() // 2 - Constants._display_offset()),
+            (Constants._screen_h() // 2 - Constants._display_offset()),
         )
         display_text(
             f"Score: {score}",
-            (255, 255, 255),
-            (Constants._screen_w() // 2 - 100),
-            (Constants._screen_h() // 2 - 50),
+            Constants._white(),
+            (Constants._screen_w() // 2 - Constants._display_offset()),
+            (Constants._screen_h() // 2 - Constants._display_offset() / 2),
         )
         display_text(
             f"High Score: {highscore}",
-            (0, 255, 255),
-            (Constants._screen_w() // 2 - 100),
+            Constants._aqua(),
+            (Constants._screen_w() // 2 - Constants._display_offset()),
             (Constants._screen_h() // 2),
         )
 
         # Impliment restart button tie-in.
-        pygame.draw.rect(screen, (128, 239, 128), button_rect)
-        display_text("Restart", (255, 255, 255), button_rect.x + 40, button_rect.y + 5)
+        pygame.draw.rect(screen, Constants._button_color(), button_rect)
+        display_text("Restart", Constants._white(), button_rect.x + 40, button_rect.y + 5)
         pygame.display.flip()
 
         # Since we are out of the game loop, we need to account for
