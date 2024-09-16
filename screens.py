@@ -36,7 +36,12 @@ def start_screen() -> None:
     """
 
     player_image = pygame.image.load("player.png").convert_alpha()
-    player_rect = player_image.get_rect(center=(Constants._screen_w() // 2, Constants._screen_h() // 3 + 30))
+    player_rect = player_image.get_rect(
+        center = (
+            Constants._screen_w() // 2,
+            Constants._screen_h() // 3 + Constants._enlarge_sprite()
+            )
+        )
 
     start_button_color = Constants._button_color()
     button_rect = pygame.Rect(
@@ -61,18 +66,33 @@ def start_screen() -> None:
         credited_lines = credited_text.split('\n') # Turn the wall of text into a list.
         for i, line in enumerate(credited_lines):
             text_width, text_height = small_font.size(line)
-            display_smaller_text(line, Constants._dark_red(), Constants._screen_w() // 2 - text_width // 2, 30 + i * text_height)
+            display_smaller_text(
+                line, 
+                Constants._dark_red(), 
+                Constants._screen_w() // 2 - text_width // 2, 
+                (Constants._line_spacing() / 2) + i * text_height
+            )
 
         screen.blit(player_image, player_rect)
 
         pygame.draw.rect(screen, start_button_color, button_rect)
-        display_text("Start", Constants._white(), button_rect.x + 60, button_rect.y + 5)
+        display_text(
+            "Start", 
+            Constants._white(), 
+            button_rect.x + Constants._start_text_dx(), 
+            button_rect.y + Constants._text_dy()
+        )
 
         # Display tutorial_text centered under the start button.
         tutorial_lines = tutorial_text.split('\n')
         for i, line in enumerate(tutorial_lines):
             text_width, text_height = small_font.size(line)
-            display_smaller_text(line, Constants._dark_red(), Constants._screen_w() // 2 - text_width // 2, button_rect.y + 60 + i * text_height)
+            display_smaller_text(
+                line, 
+                Constants._dark_red(), 
+                Constants._screen_w() // 2 - text_width // 2, 
+                button_rect.y + Constants._line_spacing() + i * text_height
+            )
 
         pygame.display.flip()
 
@@ -87,10 +107,13 @@ def start_screen() -> None:
 
 
 def always_display_score(score: int) -> None:
-    """Display score in the top-left corner of the screen."""
+    """
+    Display score in the top-left corner of the screen.
+    """
     # The starting pixel here is offset from the top left corner.
-    display_text(f"Score: {score}", 
-                 Constants._white(), 
-                 Constants._score_display(), 
-                 Constants._score_display()
+    display_text(
+        f"Score: {score}", 
+        Constants._white(), 
+        Constants._score_display(), 
+        Constants._score_display()
     )

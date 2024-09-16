@@ -39,6 +39,11 @@ class Constants:
     _AQUA = (0, 255, 255)
     _BLACK = (0, 0, 0)
     _SCORE_DISPLAY_OFFSET = 10
+    _RESTART_TEXT_X_OFFSET = 40
+    _START_TEXT_X_OFFSET = 60
+    _ALL_TEXT_Y_OFFSET = 5
+    _LINE_SPACING = 60
+    _ENLARGED_SPRITE_EXTENSION = 30
     _TRANSITION_TIME = 0.5    # Seconds
 
     @classmethod
@@ -185,6 +190,26 @@ class Constants:
     def _score_display(cls):
         return cls._SCORE_DISPLAY_OFFSET
     
+    @classmethod
+    def _restart_text_dx(cls):
+        return cls._RESTART_TEXT_X_OFFSET
+    
+    @classmethod
+    def _start_text_dx(cls):
+        return cls._START_TEXT_X_OFFSET
+    
+    @classmethod
+    def _text_dy(cls):
+        return cls._ALL_TEXT_Y_OFFSET
+    
+    @classmethod
+    def _line_spacing(cls):
+        return cls._LINE_SPACING
+    
+    @classmethod
+    def _enlarge_sprite(cls):
+        return cls._ENLARGED_SPRITE_EXTENSION
+
     @classmethod
     def _screen_change(cls):
         return cls._TRANSITION_TIME

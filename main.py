@@ -10,7 +10,9 @@ import pygame
 
 
 def play() -> None:
-    """Main game loop"""
+    """
+    Main game loop
+    """
     # Load background image and sprites.
     background_image = pygame.image.load("background.png").convert()  # Loading image.
     player = Player()  # Create the player sprite.
@@ -105,7 +107,9 @@ def play() -> None:
 
 
 def game_over_screen(score: int) -> None:
-    """Display the 'Game Over' screen and trigger restart or quit."""
+    """
+    Display the 'Game Over' screen and trigger restart or quit.
+    """
     # Save player score to a CSV.
     highscore = save_score(score)
     button_rect = pygame.Rect(
@@ -123,24 +127,29 @@ def game_over_screen(score: int) -> None:
             "Game Over",
             Constants._red(),
             (Constants._screen_w() // 2 - Constants._display_offset()),
-            (Constants._screen_h() // 2 - Constants._display_offset()),
+            (Constants._screen_h() // 2 - Constants._display_offset())
         )
         display_text(
             f"Score: {score}",
             Constants._white(),
             (Constants._screen_w() // 2 - Constants._display_offset()),
-            (Constants._screen_h() // 2 - Constants._display_offset() / 2),
+            (Constants._screen_h() // 2 - Constants._display_offset() / 2)
         )
         display_text(
             f"High Score: {highscore}",
             Constants._aqua(),
             (Constants._screen_w() // 2 - Constants._display_offset()),
-            (Constants._screen_h() // 2),
+            (Constants._screen_h() // 2)
         )
 
         # Impliment restart button tie-in.
         pygame.draw.rect(screen, Constants._button_color(), button_rect)
-        display_text("Restart", Constants._white(), button_rect.x + 40, button_rect.y + 5)
+        display_text(
+            "Restart", 
+            Constants._white(), 
+            button_rect.x + Constants._restart_text_dx(), 
+            button_rect.y + Constants._text_dy()
+        )
         pygame.display.flip()
 
         # Since we are out of the game loop, we need to account for
@@ -156,7 +165,9 @@ def game_over_screen(score: int) -> None:
 
 
 def restart() -> None:
-    """Restart the game by re-entering the game loop"""
+    """
+    Restart the game by re-entering the game loop.
+    """
     play()
 
 

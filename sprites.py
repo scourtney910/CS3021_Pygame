@@ -17,7 +17,8 @@ class Player(pygame.sprite.Sprite, Constants):
 
         self.original_image = pygame.image.load("player.png").convert_alpha()
         self.image = pygame.transform.scale(
-            self.original_image, (self._player_w(), self._player_h())
+            self.original_image, 
+            (self._player_w(), self._player_h())
         )
 
         self.rect = self.image.get_rect()  # Forcing player hit box into a square.
@@ -129,7 +130,8 @@ class Platform(pygame.sprite.Sprite, Constants):
         super().__init__()
         self.original_image = pygame.image.load("platform.png").convert_alpha()
         self.image = pygame.transform.scale(
-          self.original_image, (self._platform_w(), self._platform_h())
+          self.original_image, 
+          (self._platform_w(), self._platform_h())
         )
 
         self.rect = self.image.get_rect()
@@ -147,7 +149,8 @@ class Items(pygame.sprite.Sprite, Constants):
         super().__init__()
         self.original_image = pygame.image.load("strawberry.png").convert_alpha()
         self.image = pygame.transform.scale(
-            self.original_image, (self._item_size(), self._item_size())
+            self.original_image, 
+            (self._item_size(), self._item_size())
         )
 
         # Creating rectangular object with width = x and height = y.
